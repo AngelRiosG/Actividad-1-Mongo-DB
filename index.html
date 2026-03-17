@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía Completa: Actividad Práctica MongoDB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Slate (neutral base), Emerald (MongoDB primary), Indigo/Violet (accent for queries), Blue (action buttons) -->
+    <!-- Application Structure Plan: Linear timeline with enhanced navigation and utility. Added a floating quick-nav bar for jumping between sections, "Simulate Output" toggles for better comprehension of complex queries, and a "Generate .txt" feature to directly solve the user's assignment requirement (consolidating scripts into a downloadable text file). -->
+    <!-- Visualization & Content Choices: 
+         - Timeline layout -> Preserved for linear learning.
+         - Floating Action Buttons (FAB) -> Goal: Quick navigation & Export -> Justification: The page is long; users need shortcuts. Exporting the .txt directly adds immense value based on the source document requirements.
+         - Mock Terminal Outputs -> Goal: Show, don't just tell -> Justification: Helps users visualize what `findOne` or `forEach` actually returns without needing a live DB connection.
+         - NO SVG/Mermaid used.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            scroll-behavior: smooth;
+        }
+        
+        .font-code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Custom Scrollbar for code blocks */
+        .code-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+        .code-scroll::-webkit-scrollbar-track {
+            background: #1e293b; 
+            border-radius: 4px;
+        }
+        .code-scroll::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+        .code-scroll::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 2rem;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #e2e8f0;
+            z-index: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .timeline-line {
+                left: 1.5rem;
+            }
+        }
+
+        /* Floating Nav Styles */
+        .floating-nav {
+            backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+    </style>
+</head>
+<body class="antialiased pb-32 relative">
+
+    <!-- Header -->
+    <header id="top" class="bg-slate-900 text-white pt-16 pb-24 px-6 text-center relative border-b-8 border-emerald-500">
+        <div class="max-w-4xl mx-auto relative z-10">
+            <span class="inline-block py-1 px-3 rounded-full bg-emerald-900 text-emerald-300 text-sm font-bold tracking-widest uppercase mb-4 shadow-sm border border-emerald-700">
+                Resolución Completa Interactiva
+            </span>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight leading-tight">
+                Análisis de Datos con <span class="text-emerald-400">MongoDB</span>
+            </h1>
+            <p class="text-lg md:text-xl font-light text-slate-300 max-w-2xl mx-auto">
+                Guía interactiva paso a paso con todas las preguntas, scripts y simuladores de resultados para las colecciones <em>books</em> y <em>companies</em>.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content / Timeline -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 relative z-20 -mt-12">
+        
+        <div class="relative">
+            <!-- The vertical line -->
+            <div class="timeline-line hidden md:block rounded-full"></div>
+
+            <!-- ==========================================
+                 PASO 1
+                 ========================================== -->
+            <div id="paso-1" class="relative z-10 mb-16 md:pl-20 group scroll-mt-24">
+                <div class="hidden md:flex absolute left-0 top-0 w-16 h-16 bg-white border-4 border-emerald-500 rounded-full items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                    <span class="text-2xl font-bold text-emerald-600">1</span>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                    <div class="bg-emerald-600 px-6 py-4 flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <span class="md:hidden bg-white text-emerald-700 w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
+                            Carga de Datos
+                        </h2>
+                        <span class="text-3xl opacity-50">&#128194;</span>
+                    </div>
+                    
+                    <div class="p-6">
+                        <p class="text-slate-600 mb-6 leading-relaxed">
+                            El objetivo inicial es crear la base de datos <strong>miscelanea</strong> e importar los archivos JSON. Esto se realiza desde la terminal del sistema operativo.
+                        </p>
+
+                        <div class="space-y-6">
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h3 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                                    <span class="text-emerald-600">&#9654;</span> Importar la colección 'books'
+                                </h3>
+                                <div class="relative mt-3 group/code">
+                                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-emerald-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all focus:opacity-100">Copiar</button>
+                                    <pre class="bg-slate-900 text-emerald-400 p-4 rounded-lg font-code text-sm overflow-x-auto code-scroll">mongoimport --verbose --db miscelanea --collection books --file "C:\ruta\act-2-books.json"</pre>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <h3 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                                    <span class="text-emerald-600">&#9654;</span> Importar la colección 'companies'
+                                </h3>
+                                <div class="relative mt-3 group/code">
+                                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-emerald-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all focus:opacity-100">Copiar</button>
+                                    <pre class="bg-slate-900 text-emerald-400 p-4 rounded-lg font-code text-sm overflow-x-auto code-scroll">mongoimport --verbose --db miscelanea --collection companies --file "C:\ruta\act-2-companies.json"</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 PASO 2
+                 ========================================== -->
+            <div id="paso-2" class="relative z-10 mb-16 md:pl-20 group scroll-mt-24">
+                <div class="hidden md:flex absolute left-0 top-0 w-16 h-16 bg-white border-4 border-indigo-500 rounded-full items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                    <span class="text-2xl font-bold text-indigo-600">2</span>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                    <div class="bg-indigo-600 px-6 py-4 flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <span class="md:hidden bg-white text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
+                            Exploración de Colecciones
+                        </h2>
+                        <span class="text-3xl opacity-50">&#128269;</span>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="space-y-6">
+                            
+                            <!-- Q 2.1 con Simulador -->
+                            <div class="bg-indigo-50/50 p-5 rounded-xl border border-indigo-100">
+                                <div class="flex justify-between items-start flex-wrap gap-2">
+                                    <div>
+                                        <h3 class="font-bold text-indigo-900 mb-2">▸ Extraer un documento de forma «bonita»</h3>
+                                        <p class="text-sm text-slate-600 mb-3">Se utiliza <code>findOne()</code> para traer el primer registro formateado.</p>
+                                    </div>
+                                    <button onclick="toggleTerminal('term-findone')" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 text-xs font-bold py-1 px-3 rounded border border-indigo-300 transition-colors">
+                                        &#128187; Simular Resultado
+                                    </button>
+                                </div>
+                                <div class="relative group/code">
+                                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-indigo-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                    <pre class="bg-slate-900 text-indigo-300 p-4 rounded-lg font-code text-sm overflow-x-auto code-scroll">db.books.findOne()</pre>
+                                </div>
+                                <!-- Terminal Simulado Oculto -->
+                                <div id="term-findone" class="hidden mt-3 bg-black border border-slate-700 rounded-lg p-4 font-code text-xs text-green-400 overflow-x-auto shadow-inner">
+{
+  _id: ObjectId("65e0a1b2..."),
+  title: "Unlocking Android",
+  isbn: "1933988673",
+  pageCount: 416,
+  publishedDate: ISODate("2009-04-01T00:00:00.000Z"),
+  thumbnailUrl: "https://...",
+  status: "PUBLISH",
+  authors: [ "W. Frank Ableson", "Charlie Collins", "Robi Sen" ],
+  categories: [ "Open Source", "Mobile" ]
+}
+                                </div>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="bg-indigo-50/50 p-5 rounded-xl border border-indigo-100">
+                                    <h3 class="font-bold text-indigo-900 mb-2">▸ Distintas categorías (books)</h3>
+                                    <div class="relative group/code mt-3">
+                                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-indigo-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                        <pre class="bg-slate-900 text-indigo-300 p-4 rounded-lg font-code text-sm overflow-x-auto code-scroll">db.books.distinct("categories")</pre>
+                                    </div>
+                                </div>
+                                <div class="bg-indigo-50/50 p-5 rounded-xl border border-indigo-100">
+                                    <h3 class="font-bold text-indigo-900 mb-2">▸ Distintos estados (books)</h3>
+                                    <div class="relative group/code mt-3">
+                                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-indigo-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                        <pre class="bg-slate-900 text-indigo-300 p-4 rounded-lg font-code text-sm overflow-x-auto code-scroll">db.books.distinct("status")</pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-indigo-50/50 p-5 rounded-xl border border-indigo-100">
+                                <h3 class="font-bold text-indigo-900 mb-2">▸ Consulta y Proyección ($gte, $lt)</h3>
+                                <div class="relative group/code mb-3">
+                                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-indigo-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                    <pre class="bg-slate-900 text-indigo-300 p-4 rounded-lg font-code text-sm overflow-x-auto code-scroll">db.books.find({longDescription: {$gte: "A", $lt: "B"}}, {title: 1, longDescription: 1})</pre>
+                                </div>
+                                <p class="text-sm text-slate-700 mt-2 bg-white p-3 rounded border border-indigo-50">
+                                    <strong>¿Qué hace?:</strong> Busca libros cuya descripción larga (<code>longDescription</code>) empiece con la letra "A". Además, incluye una <strong>proyección</strong> <code>{title: 1, longDescription: 1}</code> para que el resultado en pantalla solo muestre esos campos específicos.
+                                </p>
+                            </div>
+
+                            <div class="bg-indigo-50/50 p-5 rounded-xl border border-indigo-100">
+                                <h3 class="font-bold text-indigo-900 mb-2">▸ Filtrar tamaño de arreglo ($size)</h3>
+                                <div class="relative group/code mt-3">
+                                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-indigo-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                    <pre class="bg-slate-900 text-indigo-300 p-4 rounded-lg font-code text-sm overflow-x-auto code-scroll">db.books.find(
+    { longDescription: {$gte: "A", $lt: "B"}, authors: {$size: 2}, status: "PUBLISH" }, 
+    { title: 1, longDescription: 1, status: 1, authors: 1, _id: 0 }
+)</pre>
+                                </div>
+                            </div>
+
+                            <!-- Q 2.6 & 2.7 con Simulador -->
+                            <div class="bg-slate-800 text-white p-5 rounded-xl border border-slate-700">
+                                <h3 class="font-bold text-indigo-300 mb-4 text-lg">&#9881; Modificadores de Salida (.toArray y .forEach)</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <p class="text-sm text-slate-300"><code>.toArray()</code> convierte el cursor en un arreglo JavaScript en memoria. <code>.forEach(...)</code> recorre ese arreglo y permite formatear la salida en la consola.</p>
+                                        
+                                        <div class="flex justify-end mb-2 mt-3">
+                                            <button onclick="toggleTerminal('term-foreach')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-1 px-3 rounded transition-colors">
+                                                &#9655; Ejecutar Simulación
+                                            </button>
+                                        </div>
+                                        <div class="relative group/code">
+                                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-600 hover:bg-emerald-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                            <pre class="bg-black/80 text-emerald-400 p-4 rounded-lg font-code text-xs overflow-x-auto code-scroll">db.books.find({ longDescription: {$gte: "A", $lt: "B"}, authors: {$size: 2}, status: "PUBLISH" }, { title: 1, longDescription: 1, status: 1, authors: 1, _id: 0 }).toArray().forEach(function(valor, indice, array){print("Titulo: " + valor.title + " Autho 1: " + valor.authors[0] + " Author 2: " + valor.authors[1] + " Registro No. " + indice);})</pre>
+                                        </div>
+                                        
+                                        <!-- Terminal Simulado Oculto -->
+                                        <div id="term-foreach" class="hidden mt-3 bg-black border border-slate-600 rounded-lg p-4 font-code text-xs text-yellow-300 overflow-x-auto shadow-inner whitespace-pre-line">
+> Ejecutando script...
+Titulo: Android in Action Autho 1: W. Frank Ableson Author 2: Charlie Collins Registro No. 0
+Titulo: Flex 3 in Action Autho 1: Tariq Ahmed Author 2: Jon Hirschi Registro No. 1
+Titulo: Ajax in Practice Autho 1: Dave Crane Author 2: Bear Bibeault Registro No. 2
+> Fin de ejecución.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 PASO 3
+                 ========================================== -->
+            <div id="paso-3" class="relative z-10 mb-16 md:pl-20 group scroll-mt-24">
+                <div class="hidden md:flex absolute left-0 top-0 w-16 h-16 bg-white border-4 border-cyan-500 rounded-full items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                    <span class="text-2xl font-bold text-cyan-600">3</span>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                    <div class="bg-cyan-700 px-6 py-4 flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <span class="md:hidden bg-white text-cyan-800 w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span>
+                            Consulta la colección 1 (Books)
+                        </h2>
+                        <span class="text-3xl opacity-50">&#128218;</span>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            
+                            <div class="bg-cyan-50/30 p-4 rounded-xl border border-cyan-100 hover:bg-cyan-50 transition-colors">
+                                <h3 class="font-bold text-cyan-900 mb-2">▸ Tamaño de la colección (en bytes)</h3>
+                                <div class="relative group/code mt-2">
+                                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-cyan-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                    <pre class="bg-slate-900 text-cyan-300 p-3 rounded font-code text-sm overflow-x-auto code-scroll">db.books.dataSize()</pre>
+                                </div>
+                            </div>
+
+                            <div class="bg-cyan-50/30 p-4 rounded-xl border border-cyan-100 hover:bg-cyan-50 transition-colors">
+                                <h3 class="font-bold text-cyan-900 mb-2">▸ ¿Cuántos libros tiene la colección?</h3>
+                                <div class="relative group/code mt-2">
+                                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-cyan-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                    <pre class="bg-slate-900 text-cyan-300 p-3 rounded font-code text-sm overflow-x-auto code-scroll">db.books.countDocuments()</pre>
+                                </div>
+                            </div>
+
+                            <div class="bg-cyan-50/30 p-4 rounded-xl border border-cyan-100 hover:bg-cyan-50 transition-colors">
+                                <h3 class="font-bold text-cyan-900 mb-2">▸ 200 o más páginas</h3>
+                                <div class="relative group/code">
+                                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-cyan-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                    <pre class="bg-slate-900 text-cyan-300 p-3 rounded font-code text-sm overflow-x-auto code-scroll">db.books.countDocuments({ pageCount: { $gte: 200 } })</pre>
+                                </div>
+                            </div>
+
+                            <div class="bg-cyan-50/30 p-4 rounded-xl border border-cyan-100 hover:bg-cyan-50 transition-colors">
+                                <h3 class="font-bold text-cyan-900 mb-2">▸ Entre 300 y 600 páginas</h3>
+                                <div class="relative group/code">
+                                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-cyan-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                    <pre class="bg-slate-900 text-cyan-300 p-3 rounded font-code text-sm overflow-x-auto code-scroll">db.books.countDocuments({ pageCount: { $gte: 300, $lte: 600 } })</pre>
+                                </div>
+                            </div>
+
+                            <div class="bg-cyan-50/30 p-4 rounded-xl border border-cyan-100 hover:bg-cyan-50 transition-colors md:col-span-2">
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <h3 class="font-bold text-cyan-900 mb-2">▸ 0 páginas</h3>
+                                        <div class="relative group/code">
+                                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-cyan-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                            <pre class="bg-slate-900 text-cyan-300 p-3 rounded font-code text-sm overflow-x-auto code-scroll">db.books.countDocuments({ pageCount: 0 })</pre>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-cyan-900 mb-2">▸ Distinto de 0 páginas ($ne)</h3>
+                                        <div class="relative group/code">
+                                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-cyan-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                            <pre class="bg-slate-900 text-cyan-300 p-3 rounded font-code text-sm overflow-x-auto code-scroll">db.books.countDocuments({ pageCount: { $ne: 0 } })</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-cyan-50/30 p-4 rounded-xl border border-cyan-100 hover:bg-cyan-50 transition-colors md:col-span-2">
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <h3 class="font-bold text-cyan-900 mb-2">▸ Libros publicados</h3>
+                                        <div class="relative group/code">
+                                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-cyan-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                            <pre class="bg-slate-900 text-cyan-300 p-3 rounded font-code text-sm overflow-x-auto code-scroll">db.books.countDocuments({ status: "PUBLISH" })</pre>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-cyan-900 mb-2">▸ Libros NO publicados</h3>
+                                        <div class="relative group/code">
+                                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-cyan-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                            <pre class="bg-slate-900 text-cyan-300 p-3 rounded font-code text-sm overflow-x-auto code-scroll">db.books.countDocuments({ status: { $ne: "PUBLISH" } })</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 PASO 4
+                 ========================================== -->
+            <div id="paso-4" class="relative z-10 md:pl-20 group scroll-mt-24">
+                <div class="hidden md:flex absolute left-0 top-0 w-16 h-16 bg-white border-4 border-orange-500 rounded-full items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                    <span class="text-2xl font-bold text-orange-600">4</span>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                    <div class="bg-orange-600 px-6 py-4 flex items-center justify-between">
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <span class="md:hidden bg-white text-orange-700 w-8 h-8 rounded-full flex items-center justify-center text-sm">4</span>
+                            Consulta la colección 2 (Companies)
+                        </h2>
+                        <span class="text-3xl opacity-50">&#127980;</span>
+                    </div>
+                    
+                    <div class="p-6 space-y-6">
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-6">
+                                <div class="bg-orange-50/50 p-4 rounded-xl border border-orange-100">
+                                    <h3 class="font-bold text-orange-900 mb-2">▸ Tamaño y Cantidad total</h3>
+                                    <div class="space-y-2">
+                                        <div class="relative group/code">
+                                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-orange-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                            <pre class="bg-slate-900 text-orange-300 p-2 rounded font-code text-xs overflow-x-auto code-scroll">db.companies.dataSize()</pre>
+                                        </div>
+                                        <div class="relative group/code">
+                                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-orange-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                            <pre class="bg-slate-900 text-orange-300 p-2 rounded font-code text-xs overflow-x-auto code-scroll">db.companies.countDocuments()</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-orange-50/50 p-4 rounded-xl border border-orange-100">
+                                    <h3 class="font-bold text-orange-900 mb-2">▸ >= 600 empleados</h3>
+                                    <div class="relative group/code mt-2">
+                                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-orange-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                        <pre class="bg-slate-900 text-orange-300 p-3 rounded font-code text-xs overflow-x-auto code-scroll">db.companies.countDocuments({ number_of_employees: { $gte: 600 } })</pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-orange-50/50 p-4 rounded-xl border border-orange-100 h-full">
+                                <h3 class="font-bold text-orange-900 mb-2">▸ Fundadas en 1996, 1997, 2001 y 2005</h3>
+                                <p class="text-xs text-slate-600 mb-3">Uso del framework de <strong>agregación</strong> para obtener totales agrupados en una sola petición.</p>
+                                <div class="relative group/code">
+                                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-orange-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                    <pre class="bg-slate-900 text-orange-300 p-3 rounded font-code text-xs overflow-x-auto code-scroll h-full">db.companies.aggregate([
+  { $match: { founded_year: { $in: [1996, 1997, 2001, 2005] } } },
+  { $group: { _id: "$founded_year", total: { $sum: 1 } } }
+])</pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-orange-50/50 p-5 rounded-xl border border-orange-100">
+                            <h3 class="font-bold text-orange-900 mb-2">▸ Dedicadas a «web» o «mobile» (Operador $in y proyección)</h3>
+                            <div class="relative group/code mt-3">
+                                <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-orange-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                <pre class="bg-slate-900 text-orange-300 p-3 rounded font-code text-sm overflow-x-auto code-scroll">db.companies.find(
+    { category_code: { $in: ["web", "mobile"] } },
+    { name: 1, description: 1, number_of_employees: 1, email_address: 1, founded_year: 1, founded_month: 1, founded_day: 1, _id: 0 }
+)</pre>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="bg-orange-50/50 p-5 rounded-xl border border-orange-100">
+                                <h3 class="font-bold text-orange-900 mb-2">▸ Videojuegos en orden descendente</h3>
+                                <p class="text-xs text-slate-600 mb-2">Uso de <code>.sort({campo: -1})</code></p>
+                                <div class="relative group/code">
+                                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-orange-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                    <pre class="bg-slate-900 text-orange-300 p-3 rounded font-code text-xs overflow-x-auto code-scroll">db.companies.find(
+    { category_code: "games_video" }
+).sort({ founded_year: -1 })</pre>
+                                </div>
+                            </div>
+
+                            <div class="bg-orange-50/50 p-5 rounded-xl border border-orange-100">
+                                <h3 class="font-bold text-orange-900 mb-2">▸ Única y exclusivamente 2 oficinas en SF</h3>
+                                <div class="relative group/code">
+                                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-700 hover:bg-orange-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                    <pre class="bg-slate-900 text-orange-300 p-3 rounded font-code text-xs overflow-x-auto code-scroll">db.companies.find({
+    offices: { $size: 2 },
+    "offices.city": "San Francisco"
+})</pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 text-white">
+                            <h3 class="font-bold text-orange-400 mb-4 text-lg">&#128161; Análisis Complejo</h3>
+                            
+                            <div class="mb-6">
+                                <h4 class="font-bold mb-2">▸ 2001-2005, >=500 emp., videojuegos O música</h4>
+                                <div class="relative group/code mb-3">
+                                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-600 hover:bg-orange-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                    <pre class="bg-black/50 text-orange-300 p-3 rounded font-code text-sm overflow-x-auto code-scroll">db.companies.find(
+    { founded_year: { $gte: 2001, $lte: 2005 }, number_of_employees: { $gte: 500 }, category_code: { $in: ["games_video", "music"] } },
+    { name: 1, homepage_url: 1, twitter_username: 1, number_of_employees: 1, _id: 0 }
+)</pre>
+                                </div>
+                                <div class="bg-orange-900/30 border border-orange-500/50 p-3 rounded text-sm text-orange-200">
+                                    <strong>¿Alguna empresa se dedica a videojuegos y música a la vez?</strong><br>
+                                    No. En este esquema, el campo <code>category_code</code> guarda un valor de tipo String (cadena única), no un Array. Por ende, un documento solo puede tener asignada una categoría a la vez.
+                                </div>
+                            </div>
+
+                            <hr class="border-slate-600 mb-6">
+
+                            <div>
+                                <h4 class="font-bold mb-2">▸ Adquisiciones en 2007 (>= 10M USD), videojuegos, sede Culver City</h4>
+                                <p class="text-sm text-slate-300 mb-3">Se utiliza la <strong>notación de punto</strong> entre comillas para sub-documentos.</p>
+                                <div class="relative group/code">
+                                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-slate-600 hover:bg-orange-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover/code:opacity-100 transition-all">Copiar</button>
+                                    <pre class="bg-black/50 text-orange-300 p-3 rounded font-code text-sm overflow-x-auto code-scroll">db.companies.find(
+    { category_code: "games_video", "acquisition.acquired_year": 2007, "acquisition.price_amount": { $gte: 10000000 }, "offices.city": "Culver City" },
+    { name: 1, "acquisition.acquired_month": 1, "acquisition.acquired_day": 1, _id: 0 }
+)</pre>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Barra de Navegación Flotante Inferior -->
+    <nav class="fixed bottom-6 left-1/2 transform -translate-x-1/2 floating-nav shadow-2xl rounded-full border border-slate-200 px-4 py-2 flex items-center gap-2 z-50">
+        <a href="#paso-1" class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-sm hover:bg-emerald-600 hover:text-white transition-colors" title="Ir al Paso 1">1</a>
+        <a href="#paso-2" class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm hover:bg-indigo-600 hover:text-white transition-colors" title="Ir al Paso 2">2</a>
+        <a href="#paso-3" class="w-8 h-8 rounded-full bg-cyan-100 text-cyan-700 font-bold flex items-center justify-center text-sm hover:bg-cyan-600 hover:text-white transition-colors" title="Ir al Paso 3">3</a>
+        <a href="#paso-4" class="w-8 h-8 rounded-full bg-orange-100 text-orange-700 font-bold flex items-center justify-center text-sm hover:bg-orange-600 hover:text-white transition-colors" title="Ir al Paso 4">4</a>
+        <div class="w-px h-6 bg-slate-300 mx-1"></div>
+        <a href="#top" class="text-slate-500 hover:text-slate-900 px-2 text-xl" title="Volver Arriba">&#8593;</a>
+    </nav>
+
+    <!-- Botón Flotante para Descargar el .txt de la Tarea -->
+    <button onclick="downloadMasterTxt()" class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white shadow-xl rounded-full px-4 py-3 font-bold flex items-center gap-2 transition-transform hover:scale-105 z-50 group">
+        <span class="text-xl">&#128190;</span>
+        <span class="hidden md:inline">Descargar Scripts .txt</span>
+        <!-- Tooltip -->
+        <div class="absolute bottom-full right-0 mb-2 w-48 bg-slate-800 text-white text-xs p-2 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
+            Genera el archivo consolidado listo para entregar en tu actividad.
+        </div>
+    </button>
+
+    <script>
+        // 1. Funcionalidad de copiar al portapapeles
+        function copyCode(btn) {
+            const preElement = btn.nextElementSibling;
+            const codeToCopy = preElement.innerText;
+            
+            navigator.clipboard.writeText(codeToCopy).then(() => {
+                const originalText = btn.innerText;
+                btn.innerText = "¡Copiado!";
+                btn.classList.add('bg-emerald-500');
+                btn.classList.remove('bg-slate-700', 'bg-slate-600');
+                
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.classList.remove('bg-emerald-500');
+                    if(btn.parentElement.parentElement.classList.contains('bg-slate-800')) {
+                        btn.classList.add('bg-slate-600');
+                    } else {
+                        btn.classList.add('bg-slate-700');
+                    }
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+            });
+        }
+
+        // 2. Funcionalidad de Mostrar/Ocultar Terminal Simulada
+        function toggleTerminal(id) {
+            const el = document.getElementById(id);
+            if(el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                el.classList.add('animate-pulse');
+                setTimeout(() => el.classList.remove('animate-pulse'), 500);
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+
+        // 3. Funcionalidad Estrella: Generar el archivo .txt de la entrega
+        function downloadMasterTxt() {
+            // Este es el contenido exacto consolidado de todos los scripts de la infografía
+            const txtContent = `// ==========================================
+// Actividad Práctica 2 - MongoDB
+// Fichero de consolidación de scripts
+// ==========================================
+
+// ==========================================
+// Paso 1: Carga de datos
+// (Comandos a ejecutar en la terminal del sistema, fuera de MongoDB)
+// ==========================================
+// Importar colección books
+// mongoimport --verbose --db miscelanea --collection books --file "C:\\ruta\\act-2-books.json"
+
+// Importar colección companies
+// mongoimport --verbose --db miscelanea --collection companies --file "C:\\ruta\\act-2-companies.json"
+
+// ==========================================
+// Paso 2: Explora las colecciones
+// ==========================================
+// 1. Extraer documento de forma bonita
+db.books.findOne()
+db.companies.findOne()
+
+// 2. Distintas categorías (books)
+db.books.distinct("categories")
+
+// 3. Distintos estados (books)
+db.books.distinct("status")
+
+// 4. Consulta (Descriptiva):
+// db.books.find({longDescription: {$gte: "A", $lt: "B"}}, {title: 1, longDescription: 1})
+
+// 5. Mismos filtros + 2 autores + publicados
+db.books.find(
+    { longDescription: {$gte: "A", $lt: "B"}, authors: {$size: 2}, status: "PUBLISH" }, 
+    { title: 1, longDescription: 1, status: 1, authors: 1, _id: 0 }
+)
+
+// 6 y 7. Simulador de toArray() y forEach()
+// db.books.find({ longDescription: {$gte: "A", $lt: "B"}, authors: {$size: 2}, status: "PUBLISH" }, { title: 1, longDescription: 1, status: 1, authors: 1, _id: 0 }).toArray().forEach(function(valor, indice, array){print("Titulo: " + valor.title + " Autho 1: " + valor.authors[0] + " Author 2: " + valor.authors[1] + " Registro No. " + indice);})
+
+// ==========================================
+// Paso 3: Consulta la colección 1 (books)
+// ==========================================
+// Tamaño en bytes
+db.books.dataSize()
+
+// Cuántos libros tiene
+db.books.countDocuments()
+
+// 200 o más páginas
+db.books.countDocuments({ pageCount: { $gte: 200 } })
+
+// Entre 300 y 600 páginas
+db.books.countDocuments({ pageCount: { $gte: 300, $lte: 600 } })
+
+// 0 páginas
+db.books.countDocuments({ pageCount: 0 })
+
+// Distinto de 0 páginas
+db.books.countDocuments({ pageCount: { $ne: 0 } })
+
+// Libros publicados
+db.books.countDocuments({ status: "PUBLISH" })
+
+// Libros NO publicados
+db.books.countDocuments({ status: { $ne: "PUBLISH" } })
+
+// ==========================================
+// Paso 4: Consulta la colección 2 (companies)
+// ==========================================
+// Tamaño en bytes
+db.companies.dataSize()
+
+// Cuántas compañías tiene
+db.companies.countDocuments()
+
+// >= 600 empleados
+db.companies.countDocuments({ number_of_employees: { $gte: 600 } })
+
+// Fundadas en 1996, 1997, 2001 y 2005 (Agregación)
+db.companies.aggregate([
+  { $match: { founded_year: { $in: [1996, 1997, 2001, 2005] } } },
+  { $group: { _id: "$founded_year", total: { $sum: 1 } } }
+])
+
+// Dedicadas a web o mobile
+db.companies.find(
+    { category_code: { $in: ["web", "mobile"] } },
+    { name: 1, description: 1, number_of_employees: 1, email_address: 1, founded_year: 1, founded_month: 1, founded_day: 1, _id: 0 }
+)
+
+// Videojuegos en orden descendente por año
+db.companies.find(
+    { category_code: "games_video" }
+).sort({ founded_year: -1 })
+
+// 2 oficinas exactamente en SF
+db.companies.find({
+    offices: { $size: 2 },
+    "offices.city": "San Francisco"
+})
+
+// 2001-2005, >=500 emp, videojuegos o música
+db.companies.find(
+    { founded_year: { $gte: 2001, $lte: 2005 }, number_of_employees: { $gte: 500 }, category_code: { $in: ["games_video", "music"] } },
+    { name: 1, homepage_url: 1, twitter_username: 1, number_of_employees: 1, _id: 0 }
+)
+
+// Adquisiciones 2007, >= 10M, games_video, Culver City
+db.companies.find(
+    { category_code: "games_video", "acquisition.acquired_year": 2007, "acquisition.price_amount": { $gte: 10000000 }, "offices.city": "Culver City" },
+    { name: 1, "acquisition.acquired_month": 1, "acquisition.acquired_day": 1, _id: 0 }
+)
+`;
+            
+            // Lógica de descarga en el navegador
+            const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            // Nombre de archivo por defecto sugerido en la actividad
+            a.download = 'actividad_1.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
